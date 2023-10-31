@@ -18,6 +18,10 @@ class Airplane(models.Model):
         AirplaneType, null=True, on_delete=models.SET_NULL, related_name="airplanes"
     )
 
+    @property
+    def capacity(self) -> int:
+        return self.rows * self.seats_in_row
+
     def __str__(self) -> str:
         return self.name
 
@@ -25,6 +29,10 @@ class Airplane(models.Model):
 class Crew(models.Model):
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
+
+    @property
+    def full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
@@ -44,6 +52,15 @@ class Route(models.Model):
         Airport, on_delete=models.CASCADE, related_name="destination_routs"
     )
     distance = models.IntegerField()
+    MEASUREMENT_CHOICES = (
+        ("km", "Kilometers"),
+        ("miles", "Miles")
+    )
+    type_of_measurement = models.CharField(
+        max_length=10,
+        choices=MEASUREMENT_CHOICES,
+        default="km"
+    )
 
     def __str__(self) -> str:
         return f"{self.source}-{self.destination}"
