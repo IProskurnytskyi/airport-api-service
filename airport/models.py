@@ -62,8 +62,12 @@ class Route(models.Model):
         default="km"
     )
 
-    def __str__(self) -> str:
+    @property
+    def source_destination(self) -> str:
         return f"{self.source}-{self.destination}"
+
+    def __str__(self) -> str:
+        return self.source_destination
 
 
 class Flight(models.Model):

@@ -54,10 +54,40 @@ class AirportSerializer(serializers.ModelSerializer):
 class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
-        fields = ("id", "source", "destination", "distance")
+        fields = (
+            "id",
+            "source",
+            "destination",
+            "distance",
+            "type_of_measurement"
+        )
+
+
+class RouteListSerializer(RouteSerializer):
+    source = serializers.CharField(
+        source="source.closest_big_city",
+        read_only=True
+    )
+    destination = serializers.CharField(
+        source="destination.closest_big_city",
+        read_only=True
+    )
+
+
+class RouteRetrieveSerializer(RouteSerializer):
+    source = AirportSerializer(many=False, read_only=True)
+    destination = AirportSerializer(many=False, read_only=True)
 
 
 class FlightSerializer(serializers.ModelSerializer):
+    crew = serializers.SlugRelatedField(
+        many=True, read_only=True, slug_field="full_name"
+    )
+    route = serializers.CharField(
+        source="route.source_destination",
+        read_only=True
+    )
+
     class Meta:
         model = Flight
         fields = (
@@ -70,10 +100,25 @@ class FlightSerializer(serializers.ModelSerializer):
         )
 
 
+class FlightListSerializer(FlightSerializer):
+    airplane = serializers.CharField(
+        source="airplane.name",
+        read_only=True
+    )
+
+
+class FlightRetrieveSerializer(FlightSerializer):
+    airplane = AirplaneRetrieveSerializer(many=False, read_only=True)
+
+
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ("id", "row", "seat", "flight")
+
+
+class TicketListSerializer(TicketSerializer):
+    flight = FlightListSerializer(many=False, read_only=True)
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -90,3 +135,7 @@ class OrderSerializer(serializers.ModelSerializer):
             for ticket_data in tickets_data:
                 Ticket.objects.create(order=order, **ticket_data)
             return order
+
+
+class OrderRetrieveSerializer(OrderSerializer):
+    tickets = TicketListSerializer(many=True, read_only=True)
