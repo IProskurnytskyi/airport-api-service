@@ -47,19 +47,19 @@ class Airport(models.Model):
 
 
 class Route(models.Model):
+    class MeasurementChoices(models.TextChoices):
+        KILOMETERS = "km", "Kilometers"
+        MILES = "ml", "Miles"
+
     source = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="source_routs")
     destination = models.ForeignKey(
         Airport, on_delete=models.CASCADE, related_name="destination_routs"
     )
     distance = models.IntegerField()
-    MEASUREMENT_CHOICES = (
-        ("km", "Kilometers"),
-        ("miles", "Miles")
-    )
     type_of_measurement = models.CharField(
         max_length=10,
-        choices=MEASUREMENT_CHOICES,
-        default="km"
+        choices=MeasurementChoices.choices,
+        default=MeasurementChoices.KILOMETERS
     )
 
     @property
