@@ -1,4 +1,6 @@
 from django.db.models import F, Count
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
@@ -62,7 +64,6 @@ class RouteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         source = self.request.query_params.get("source")
         destination = self.request.query_params.get("destination")
-        distance = self.request.query_params.get("distance")
     
         queryset = self.queryset
     
@@ -74,9 +75,6 @@ class RouteViewSet(viewsets.ModelViewSet):
                 destination__name__icontains=destination
             )
     
-        if distance:
-            queryset = queryset.filter(distance=distance)
-    
         return queryset.distinct()
 
     def get_serializer_class(self):
@@ -87,6 +85,23 @@ class RouteViewSet(viewsets.ModelViewSet):
             return RouteRetrieveSerializer
 
         return RouteSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type=OpenApiTypes.STR,
+                description="Filter by source (ex. ?source=paris)",
+            ),
+            OpenApiParameter(
+                "destination",
+                type=OpenApiTypes.STR,
+                description="Filter by destination (ex. ?destination=london)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class FlightViewSet(viewsets.ModelViewSet):
@@ -128,6 +143,28 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightRetrieveSerializer
 
         return FlightSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "departure date",
+                type=OpenApiTypes.DATE,
+                description="Filter by departure date (ex. ?departure_date=2023-11-01)",
+            ),
+            OpenApiParameter(
+                "arrival date",
+                type=OpenApiTypes.DATE,
+                description="Filter by arrival date (ex. ?arrival_date=2023-11-01)",
+            ),
+            OpenApiParameter(
+                "flight",
+                type=OpenApiTypes.INT,
+                description="Filter by flight id (ex. ?flight=1)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class OrderPagination(PageNumberPagination):
