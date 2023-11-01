@@ -1,5 +1,7 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
+METHODS = ("GET", "POST", "HEAD", "OPTIONS")
+
 
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     def has_permission(self, request, view):
@@ -11,9 +13,6 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
             )
             or (request.user and request.user.is_staff)
         )
-
-
-METHODS = ("GET", "POST", "HEAD", "OPTIONS")
 
 
 class IsAdminOrIfAuthenticatedReadAndCreateOnly(BasePermission):
