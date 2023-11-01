@@ -49,6 +49,24 @@ class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all()
     serializer_class = RouteSerializer
 
+    def get_queryset(self):
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+        distance = self.request.query_params.get("distance")
+    
+        queryset = self.queryset
+    
+        if source:
+            queryset = queryset.filter(source__name__icontains=source)
+    
+        if destination:
+            queryset = queryset.filter(destination__name__icontains=destination)
+    
+        if distance:
+            queryset = queryset.filter(distance=distance)
+    
+        return queryset.distinct()
+
     def get_serializer_class(self):
         if self.action == "list":
             return RouteListSerializer
@@ -70,6 +88,24 @@ class FlightViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = FlightSerializer
+
+    def get_queryset(self):
+        departure = self.request.query_params.get("departure_date")
+        arrival = self.request.query_params.get("arrival_date")
+        flight_id = self.request.query_params.get("flight")
+
+        queryset = self.queryset
+
+        if departure:
+            queryset = queryset.filter(departure_time__date=departure)
+
+        if arrival:
+            queryset = queryset.filter(arrival_time__date=arrival)
+
+        if flight_id:
+            queryset = queryset.filter(flight__id=int(flight_id))
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "list":
