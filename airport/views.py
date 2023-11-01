@@ -26,6 +26,7 @@ from airport.serializers import (
     FlightRetrieveSerializer,
     OrderRetrieveSerializer,
 )
+from user.permissions import IsAdminOrIfAuthenticatedReadAndCreateOnly
 
 
 class AirplaneTypeViewSet(viewsets.ModelViewSet):
@@ -138,6 +139,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
+    permission_classes = (IsAdminOrIfAuthenticatedReadAndCreateOnly,)
 
     def get_serializer_class(self):
         if self.action == "retrieve":
