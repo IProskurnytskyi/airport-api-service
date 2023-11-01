@@ -84,6 +84,15 @@ class TicketSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = ("id", "row", "seat", "flight")
 
+    def validate(self, attrs):
+        data = super().validate(attrs=attrs)
+        Ticket.validate_ticket(
+            attrs["row"],
+            attrs["seat"],
+            attrs["flight"]
+        )
+        return data
+
 
 class FlightSerializer(serializers.ModelSerializer):
     crew = serializers.SlugRelatedField(

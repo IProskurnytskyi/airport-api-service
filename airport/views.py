@@ -69,7 +69,9 @@ class RouteViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(source__name__icontains=source)
     
         if destination:
-            queryset = queryset.filter(destination__name__icontains=destination)
+            queryset = queryset.filter(
+                destination__name__icontains=destination
+            )
     
         if distance:
             queryset = queryset.filter(distance=distance)
@@ -92,7 +94,8 @@ class FlightViewSet(viewsets.ModelViewSet):
         .prefetch_related("crew", "airplane", "route")
         .annotate(
             tickets_available=(
-                F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                F("airplane__rows") * F("airplane__seats_in_row")
+                - Count("tickets")
             )
         )
     )
