@@ -1,5 +1,6 @@
 from django.db.models import F, Count
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
 
 from airport.models import (
     AirplaneType,
@@ -125,9 +126,15 @@ class FlightViewSet(viewsets.ModelViewSet):
         return FlightSerializer
 
 
+class OrderPagination(PageNumberPagination):
+    page_size = 10
+    max_page_size = 100
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    pagination_class = OrderPagination
 
     def get_serializer_class(self):
         if self.action == "retrieve":
