@@ -1,7 +1,15 @@
 from django.db.models import F, Count
 from rest_framework import viewsets
 
-from airport.models import AirplaneType, Airplane, Crew, Airport, Route, Flight, Order
+from airport.models import (
+    AirplaneType,
+    Airplane,
+    Crew,
+    Airport,
+    Route,
+    Flight,
+    Order
+)
 from airport.serializers import (
     AirplaneTypeSerializer,
     AirplaneSerializer,
@@ -46,7 +54,7 @@ class AirportViewSet(viewsets.ModelViewSet):
 
 
 class RouteViewSet(viewsets.ModelViewSet):
-    queryset = Route.objects.all()
+    queryset = Route.objects.select_related("source", "destination")
     serializer_class = RouteSerializer
 
     def get_queryset(self):
@@ -79,8 +87,8 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = (
-        Flight.objects.select_related("route", "airplane")
-        .prefetch_related("crew")
+        Flight.objects
+        .prefetch_related("crew", "airplane", "route")
         .annotate(
             tickets_available=(
                 F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
@@ -128,7 +136,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         return OrderSerializer
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(user=self.request.user).prefetch_related(
+            "tickets__flight__crew",
+            "tickets__flight__airplane",
+            "tickets__flight__route__source",
+            "tickets__flight__route__destination"
+        )
 
     def perform_create(self, serializer) -> None:
         serializer.save(user=self.request.user)
