@@ -160,7 +160,7 @@ class FlightViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(arrival_time__date=arrival)
 
         if flight_id:
-            queryset = queryset.filter(flight__id=int(flight_id))
+            queryset = queryset.filter(id=int(flight_id))
 
         return queryset
 
