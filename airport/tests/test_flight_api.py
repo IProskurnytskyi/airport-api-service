@@ -123,7 +123,7 @@ class AuthenticatedFlightApiTests(TestCase):
 
         remove_tickets_available(response.data)
 
-        flights = Flight.objects.all()
+        flights = Flight.objects.order_by("id")
         serializer = FlightListSerializer(flights, many=True)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
