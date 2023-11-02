@@ -51,6 +51,18 @@ class AirportSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "closest_big_city")
 
 
+class AirportListRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Airport
+        fields = ("id", "name", "closest_big_city", "image")
+
+
+class AirportImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Airport
+        fields = ("id", "image")
+
+
 class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
@@ -75,8 +87,8 @@ class RouteListSerializer(RouteSerializer):
 
 
 class RouteRetrieveSerializer(RouteSerializer):
-    source = AirportSerializer(many=False, read_only=True)
-    destination = AirportSerializer(many=False, read_only=True)
+    source = AirportListRetrieveSerializer(many=False, read_only=True)
+    destination = AirportListRetrieveSerializer(many=False, read_only=True)
 
 
 class TicketSerializer(serializers.ModelSerializer):

@@ -1,8 +1,11 @@
 from django.db.models import F, Count
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
 
 from airport.models import (
     AirplaneType,
@@ -27,6 +30,8 @@ from airport.serializers import (
     FlightListSerializer,
     FlightRetrieveSerializer,
     OrderRetrieveSerializer,
+    AirportImageSerializer,
+    AirportListRetrieveSerializer,
 )
 from user.permissions import IsAdminOrIfAuthenticatedReadAndCreateOnly
 
@@ -55,6 +60,30 @@ class CrewViewSet(viewsets.ModelViewSet):
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return AirportListRetrieveSerializer
+
+        if self.action == "upload_image":
+            return AirportImageSerializer
+
+        return AirportSerializer
+
+    @action(
+        methods=["POST"],
+        detail=True,
+        url_path="upload-image",
+        permission_classes=[IsAdminUser],
+    )
+    def upload_image(self, request, pk=None):
+        """Endpoint for uploading image to specific airport"""
+        airport = self.get_object()
+        serializer = self.get_serializer(airport, data=request.data)
+    
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
