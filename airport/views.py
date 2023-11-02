@@ -3,7 +3,6 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
@@ -16,6 +15,7 @@ from airport.models import (
     Flight,
     Order
 )
+from airport.pagination import OrderPagination
 from airport.serializers import (
     AirplaneTypeSerializer,
     AirplaneSerializer,
@@ -194,11 +194,6 @@ class FlightViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-
-
-class OrderPagination(PageNumberPagination):
-    page_size = 10
-    max_page_size = 100
 
 
 class OrderViewSet(viewsets.ModelViewSet):
