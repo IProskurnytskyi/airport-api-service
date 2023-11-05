@@ -1,6 +1,6 @@
 # Airport API 
 
-API service system for tracking flights from airports across the whole globe written on DRF
+API service system for booking tickets and tracking flights from airports across the whole globe written on DRF
 
 
 ## Installing using GitHub
@@ -18,15 +18,17 @@ if Windows: venv\Scripts\activate.bat
 pip install -r requirements.txt
 Copy .env.sample > .env and populate with all required data
 python manage.py migrate
+if you want prepopulate your db with some data use (python manage.py loaddata data.json)
 python manage.py runserver
 ```
-You have to create .env file and set all required environment variables!
+You have to create .env file and set all required environment variables before running the server!
 
 ## Run with Docker
 Docker must be installed
 
 ```shell
 Copy .env.sample > .env and populate with all required data
+if you want prepopulate your db with some data use (python manage.py loaddata data.json)
 docker-compose up --build
 ```
 
