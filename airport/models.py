@@ -145,8 +145,8 @@ class Ticket(models.Model):
                 (1 <= seat <= airplane.seats_in_row)
         ):
             raise ValidationError(
-                        f"Row must be in range: (1, {airplane.rows}), "
-                        f"seat must be in range: (1, {airplane.seats_in_row})"
+                f"Row must be in range: (1, {airplane.rows}), "
+                f"seat must be in range: (1, {airplane.seats_in_row})"
             )
 
     def clean(self) -> None:

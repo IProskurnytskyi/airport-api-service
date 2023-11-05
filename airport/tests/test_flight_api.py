@@ -234,7 +234,7 @@ class AdminFlightApiTests(TestCase):
 
     def test_create_flight(self) -> None:
         payload = get_payload()
-        
+
         response = self.client.post(FLIGHT_URL, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

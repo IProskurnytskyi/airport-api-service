@@ -80,7 +80,7 @@ class AirportViewSet(viewsets.ModelViewSet):
         """Endpoint for uploading image to specific airport"""
         airport = self.get_object()
         serializer = self.get_serializer(airport, data=request.data)
-    
+
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -93,17 +93,17 @@ class RouteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         source = self.request.query_params.get("source")
         destination = self.request.query_params.get("destination")
-    
+
         queryset = self.queryset
-    
+
         if source:
             queryset = queryset.filter(source__name__icontains=source)
-    
+
         if destination:
             queryset = queryset.filter(
                 destination__name__icontains=destination
             )
-    
+
         return queryset.distinct()
 
     def get_serializer_class(self):
@@ -178,12 +178,14 @@ class FlightViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 "departure date",
                 type=OpenApiTypes.DATE,
-                description="Filter by departure date (ex. ?departure_date=2023-11-01)",
+                description="Filter by departure date "
+                            "(ex. ?departure_date=2023-11-01)",
             ),
             OpenApiParameter(
                 "arrival date",
                 type=OpenApiTypes.DATE,
-                description="Filter by arrival date (ex. ?arrival_date=2023-11-01)",
+                description="Filter by arrival date "
+                            "(ex. ?arrival_date=2023-11-01)",
             ),
             OpenApiParameter(
                 "flight",
