@@ -38,6 +38,9 @@ docker-compose up --build
 * look for documentation via /api/doc/swagger
 * admin panel via /admin
 
+## Creating order
+You can create order using this format: {"tickets": [{"row": 14, "seat": 1, "flight": 1}]}
+
 ## Features
 * Creating airports with image
 * Filtering flights and routs
