@@ -27,9 +27,11 @@ You have to create .env file and set all required environment variables before r
 Docker must be installed
 
 ```shell
+git clone https://github.com/IProskurnytskyi/airport-api-servicer
+cd airport_api_service
 Copy .env.sample > .env and populate with all required data
-if you want prepopulate your db with some data use (python manage.py loaddata data.json)
 docker-compose up --build
+if you want prepopulate your db with some data use (python manage.py loaddata data.json)
 ```
 
 ## Getting access
