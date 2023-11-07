@@ -4,7 +4,7 @@ METHODS = ("GET", "POST", "HEAD", "OPTIONS")
 
 
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
-    def has_permission(self, request, view):
+    def has_permission(self, request, view) -> bool:
         return bool(
             (
                 request.method in SAFE_METHODS
@@ -16,7 +16,7 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
 
 
 class IsAdminOrIfAuthenticatedReadAndCreateOnly(BasePermission):
-    def has_permission(self, request, view):
+    def has_permission(self, request, view) -> bool:
         return bool(
             (
                 request.method in METHODS

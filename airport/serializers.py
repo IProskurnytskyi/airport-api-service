@@ -96,7 +96,7 @@ class TicketSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = ("id", "row", "seat", "flight")
 
-    def validate(self, attrs):
+    def validate(self, attrs) -> Ticket:
         data = super().validate(attrs=attrs)
         Ticket.validate_ticket(
             attrs["row"],

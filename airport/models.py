@@ -46,7 +46,7 @@ class Crew(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-def airport_image_file_path(instance, filename):
+def airport_image_file_path(instance, filename) -> str:
     _, extension = os.path.splitext(filename)
     filename = f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
 

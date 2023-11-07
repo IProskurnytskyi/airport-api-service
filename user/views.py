@@ -1,6 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
+from user.models import User
 from user.serializers import UserSerializer
 
 
@@ -12,5 +13,5 @@ class CreateUserView(generics.CreateAPIView):
 class ManageUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
 
-    def get_object(self):
+    def get_object(self) -> User:
         return self.request.user

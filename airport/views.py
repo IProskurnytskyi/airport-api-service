@@ -1,4 +1,6 @@
-from django.db.models import F, Count
+from typing import Type
+
+from django.db.models import F, Count, QuerySet
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets, status
@@ -45,7 +47,7 @@ class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all()
     serializer_class = AirplaneSerializer
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> Type:
         if self.action == "retrieve":
             return AirplaneRetrieveSerializer
 
@@ -61,7 +63,7 @@ class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> Type:
         if self.action in ("list", "retrieve"):
             return AirportListRetrieveSerializer
 
@@ -76,7 +78,7 @@ class AirportViewSet(viewsets.ModelViewSet):
         url_path="upload-image",
         permission_classes=[IsAdminUser],
     )
-    def upload_image(self, request, pk=None):
+    def upload_image(self, request, pk=None) -> Response:
         """Endpoint for uploading image to specific airport"""
         airport = self.get_object()
         serializer = self.get_serializer(airport, data=request.data)
@@ -90,7 +92,7 @@ class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.select_related("source", "destination")
     serializer_class = RouteSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         source = self.request.query_params.get("source")
         destination = self.request.query_params.get("destination")
 
@@ -106,7 +108,7 @@ class RouteViewSet(viewsets.ModelViewSet):
 
         return queryset.distinct()
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> Type:
         if self.action == "list":
             return RouteListSerializer
 
@@ -129,7 +131,7 @@ class RouteViewSet(viewsets.ModelViewSet):
             ),
         ]
     )
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs) -> Route:
         return super().list(request, *args, **kwargs)
 
 
@@ -146,7 +148,7 @@ class FlightViewSet(viewsets.ModelViewSet):
     )
     serializer_class = FlightSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         departure = self.request.query_params.get("departure_date")
         arrival = self.request.query_params.get("arrival_date")
         flight_id = self.request.query_params.get("flight")
@@ -164,7 +166,7 @@ class FlightViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> Type:
         if self.action == "list":
             return FlightListSerializer
 
@@ -194,7 +196,7 @@ class FlightViewSet(viewsets.ModelViewSet):
             ),
         ]
     )
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs) -> Flight:
         return super().list(request, *args, **kwargs)
 
 
@@ -204,13 +206,13 @@ class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = OrderPagination
     permission_classes = (IsAdminOrIfAuthenticatedReadAndCreateOnly,)
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> Type:
         if self.action == "retrieve":
             return OrderRetrieveSerializer
 
         return OrderSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return Order.objects.filter(user=self.request.user).prefetch_related(
             "tickets__flight__crew",
             "tickets__flight__airplane",
